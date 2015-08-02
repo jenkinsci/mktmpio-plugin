@@ -74,6 +74,7 @@
                 <version>1.106</version>
                 <configuration>
                     <injectedTestName>InjectIT</injectedTestName>
+                    <dependencyResolution>runtime</dependencyResolution>
                 </configuration>
             </plugin>
         </plugins>
@@ -83,26 +84,6 @@
             <groupId>com.mashape.unirest</groupId>
             <artifactId>unirest-java</artifactId>
             <version>1.4.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpasyncclient</artifactId>
-            <version>4.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.3.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20140107</version>
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
@@ -149,12 +130,12 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
-        <!--<dependency> &lt;!&ndash; prevent ClassNotFounds during test &ndash;&gt;-->
-            <!--<groupId>org.jenkins-ci.modules</groupId>-->
-            <!--<artifactId>sshd</artifactId>-->
-            <!--<version>1.6</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
+        <dependency> <!-- prevent ClassNotFounds during test -->
+            <groupId>org.jenkins-ci.modules</groupId>
+            <artifactId>sshd</artifactId>
+            <version>1.6</version>
+            <scope>test</scope>
+        </dependency>
         <dependency> <!-- using org.jenkinsci.plugins.workflow.test.steps.SemaphoreStep in tests -->
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-support</artifactId>
