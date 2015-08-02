@@ -1,19 +1,21 @@
 package org.jenkinsci.plugins.mktmpio;
 
-import hudson.*;
-import hudson.model.AbstractProject;
+import hudson.EnvVars;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.tasks.BuildWrapperDescriptor;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildWrapper;
-import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class Mktmpio extends SimpleBuildWrapper {
 
@@ -25,11 +27,13 @@ public class Mktmpio extends SimpleBuildWrapper {
         put("redis", "Redis");
         put("mongodb", "MongoDB");
     }};
-    private static final ListBoxModel TYPE_OPTIONS = new ListBoxModel(TYPES.size()){{
+    public static final ListBoxModel TYPE_OPTIONS = new ListBoxModel(TYPES.size()) {{
         for (Map.Entry<String, String> type : TYPES.entrySet()) {
             add(type.getValue(), type.getKey());
         }
     }};
+    @Extension
+    public static final MktmpioDescriptor GLOBAL_CONFIG = new MktmpioDescriptor();
 
     // Job config
     private String dbs;
@@ -66,8 +70,8 @@ public class Mktmpio extends SimpleBuildWrapper {
     }
 
     @Override
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl) super.getDescriptor();
+    public MktmpioDescriptor getDescriptor() {
+        return GLOBAL_CONFIG;
     }
 
     @Override
@@ -78,9 +82,8 @@ public class Mktmpio extends SimpleBuildWrapper {
                       final TaskListener listener,
                       final EnvVars initialEnvironment)
             throws IOException, InterruptedException {
-        final DescriptorImpl config = getDescriptor();
-        final String token = config.getToken();
-        final String baseUrl = config.getServer();
+        final String token = GLOBAL_CONFIG.getToken();
+        final String baseUrl = GLOBAL_CONFIG.getServer();
         final String dbs = getDbs();
         final List<MktmpioAction> environments = createInstances(listener, token, baseUrl, dbs);
         for (final MktmpioAction env : environments) {
@@ -118,59 +121,5 @@ public class Mktmpio extends SimpleBuildWrapper {
             }
         }
         return envs;
-    }
-
-    @Extension
-    public static final class DescriptorImpl extends BuildWrapperDescriptor {
-
-        @CopyOnWrite
-        private String token, server = Mktmpio.DEFAULT_SERVER;
-
-        public DescriptorImpl() {
-            load();
-        }
-
-        @Override
-        public boolean configure(final StaplerRequest req, final JSONObject formData) {
-            token = formData.getString("token");
-            server = formData.optString("server", Mktmpio.DEFAULT_SERVER);
-            save();
-            return true;
-        }
-
-        @Override
-        public Mktmpio newInstance(final StaplerRequest req, final JSONObject formData) throws hudson.model.Descriptor.FormException {
-            return req.bindJSON(Mktmpio.class, formData);
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        @DataBoundSetter
-        public void setToken(String token) {
-            this.token = token;
-        }
-
-        public String getServer() {
-            return server;
-        }
-
-        @DataBoundSetter
-        public void setServer(String server) {
-            this.server = server;
-        }
-
-        public boolean isApplicable(AbstractProject<?, ?> item) {
-            return true;
-        }
-
-        public String getDisplayName() {
-            return "Create temporary database server for build";
-        }
-
-        public ListBoxModel doFillDbsItems() {
-            return TYPE_OPTIONS;
-        }
     }
 }

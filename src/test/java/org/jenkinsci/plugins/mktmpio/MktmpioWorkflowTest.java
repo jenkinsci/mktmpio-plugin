@@ -119,7 +119,7 @@ public class MktmpioWorkflowTest extends MktmpioBaseTest {
         });
     }
 
-    private Mktmpio.DescriptorImpl getConfig() {
-        return (Mktmpio.DescriptorImpl) restartableSystem.j.jenkins.getDescriptor(Mktmpio.class);
+    private MktmpioDescriptor getConfig() {
+        return (MktmpioDescriptor) restartableSystem.j.jenkins.getDescriptor(Mktmpio.class);
     }
 }
