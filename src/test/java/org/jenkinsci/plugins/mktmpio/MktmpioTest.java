@@ -33,7 +33,7 @@ public class MktmpioTest extends MktmpioBaseTest {
         String s = FileUtils.readFileToString(build.getLogFile());
         assertThat(s, containsString("Error creating redis instance"));
         assertThat(s, containsString("Authentication required"));
-        assertThat(s, not(containsString("MKTMPIO_HOST")));
+        assertThat(s, not(containsString("REDIS_HOST")));
         assertThat(s, not(containsString("mktmpio instance created")));
         assertThat(s, not(containsString("mktmpio instance shutdown")));
     }
@@ -47,8 +47,8 @@ public class MktmpioTest extends MktmpioBaseTest {
         prepareFakeInstance("totally-legit-token", "redis");
         FreeStyleBuild build = j.buildAndAssertSuccess(project);
         String s = FileUtils.readFileToString(build.getLogFile());
-        assertThat(s, containsString("MKTMPIO_HOST=12.34.56.78"));
-        assertThat(s, containsString("MKTMPIO_PORT=54321"));
+        assertThat(s, containsString("REDIS_HOST=12.34.56.78"));
+        assertThat(s, containsString("REDIS_PORT=54321"));
         assertThat(s, containsString("mktmpio instance created"));
         assertThat(s, containsString("mktmpio instance shutdown"));
     }

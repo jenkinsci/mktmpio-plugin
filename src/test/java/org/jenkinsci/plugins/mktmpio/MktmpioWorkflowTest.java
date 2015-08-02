@@ -60,7 +60,7 @@ public class MktmpioWorkflowTest extends MktmpioBaseTest {
                         + "node {\n"
                         + "  wrap([$class: 'Mktmpio', dbs: 'redis']) {\n"
                         + "    semaphore 'shouldAllowWorkflowRestarts'\n"
-                        + "    sh 'echo REDIS_HOST=$MKTMPIO_HOST'\n"
+                        + "    sh 'echo MKTMPIO_HOST=$REDIS_HOST'\n"
                         + "  }\n"
                         + "}", true));
 
@@ -85,7 +85,7 @@ public class MktmpioWorkflowTest extends MktmpioBaseTest {
 
                 restartableSystem.j.assertBuildStatusSuccess(JenkinsRuleExt.waitForCompletion(workflowRun));
 
-                restartableSystem.j.assertLogContains("REDIS_HOST=12.34.56.78", workflowRun);
+                restartableSystem.j.assertLogContains("MKTMPIO_HOST=12.34.56.78", workflowRun);
             }
 
         });
@@ -105,7 +105,7 @@ public class MktmpioWorkflowTest extends MktmpioBaseTest {
                 workflowJob.setDefinition(new CpsFlowDefinition(""
                         + "node {\n"
                         + "  wrap([$class: 'Mktmpio', dbs: 'redis']) {\n"
-                        + "    sh 'echo REDIS_HOST=$MKTMPIO_HOST'\n"
+                        + "    sh 'echo MKTMPIO_HOST=$REDIS_HOST'\n"
                         + "  }\n"
                         + "}", true));
 
@@ -113,7 +113,7 @@ public class MktmpioWorkflowTest extends MktmpioBaseTest {
 
                 restartableSystem.j.assertBuildStatusSuccess(JenkinsRuleExt.waitForCompletion(workflowRun));
 
-                restartableSystem.j.assertLogContains("REDIS_HOST=12.34.56.78", workflowRun);
+                restartableSystem.j.assertLogContains("MKTMPIO_HOST=12.34.56.78", workflowRun);
             }
 
         });
