@@ -4,7 +4,6 @@ import hudson.*;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildWrapper;
@@ -21,28 +20,28 @@ public class Mktmpio extends SimpleBuildWrapper {
     public static final String DEFAULT_SERVER = "https://mktmp.io";
 
     // Job config
-    private String dbType;
+    private String dbs;
     private boolean shutdownWithBuild = false;
 
     @DataBoundConstructor
-    public Mktmpio(String dbType) {
-        this.dbType = dbType;
+    public Mktmpio(String dbs) {
+        this.dbs = dbs;
     }
 
     static void dispose(final MktmpioEnvironment env, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
         final String instanceID = env.id;
         MktmpioInstance instance = new MktmpioInstance(env);
         instance.destroy();
-        listener.getLogger().printf("mktmpio instance shutdown. type: %s, host: %s, port: %d\n", env.dbType, env.host, env.port);
+        listener.getLogger().printf("mktmpio instance shutdown. type: %s, host: %s, port: %d\n", env.type, env.host, env.port);
     }
 
-    public String getDbType() {
-        return dbType;
+    public String getDbs() {
+        return dbs;
     }
 
     @DataBoundSetter
-    public void setDbType(String dbType) {
-        this.dbType = dbType;
+    public void setDbs(String dbs) {
+        this.dbs = dbs;
     }
 
     public boolean isShutdownWithBuild() {
@@ -70,7 +69,7 @@ public class Mktmpio extends SimpleBuildWrapper {
         final MktmpioDescriptor config = getDescriptor();
         final String token = config.getToken();
         final String baseUrl = config.getServer();
-        final String dbType = getDbType();
+        final String dbType = getDbs();
         final MktmpioInstance instance;
         try {
             listener.getLogger().printf("Attempting to create instance (server: %s, token: %s, type: %s)",
@@ -82,8 +81,8 @@ public class Mktmpio extends SimpleBuildWrapper {
         }
         final MktmpioEnvironment env = instance.getEnv();
         final Map<String, String> envVars = env.envVars();
-        listener.hyperlink(baseUrl + "/i/" + env.id, env.dbType + " instance " + env.id);
-        listener.getLogger().printf("mktmpio instance created: %s\n", env.dbType);
+        listener.hyperlink(baseUrl + "/i/" + env.id, env.type + " instance " + env.id);
+        listener.getLogger().printf("mktmpio instance created: %s\n", env.type);
         for (Map.Entry<String, String> entry : envVars.entrySet()) {
             listener.getLogger().printf("setting %s=%s\n", entry.getKey(), entry.getValue());
         }
@@ -151,7 +150,7 @@ public class Mktmpio extends SimpleBuildWrapper {
             return "Create temporary database server for build";
         }
 
-        public ListBoxModel doFillDbTypeItems() {
+        public ListBoxModel doFillDbsItems() {
             return supportedDbTypes();
         }
     }
