@@ -9,9 +9,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class MktmpioInstance {
-    private final MktmpioEnvironment env;
+    private final MktmpioAction env;
 
-    public MktmpioInstance(final MktmpioEnvironment env) {
+    public MktmpioInstance(final MktmpioAction env) {
         this.env = env;
     }
 
@@ -34,7 +34,7 @@ public class MktmpioInstance {
         final String username = res.optString("username", "");
         final String password = res.optString("password", "");
         final String instanceUrl = urlRoot + "/i/" + id;
-        final MktmpioEnvironment env = new MktmpioEnvironment(token, id, host, port, username, password, type, shutdownWithBuild, instanceUrl);
+        final MktmpioAction env = new MktmpioAction(token, id, host, port, username, password, type, shutdownWithBuild, instanceUrl);
         return new MktmpioInstance(env);
     }
 
@@ -49,7 +49,7 @@ public class MktmpioInstance {
         }
     }
 
-    public MktmpioEnvironment getEnv() {
+    public MktmpioAction getEnv() {
         return this.env;
     }
 
