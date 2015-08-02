@@ -14,7 +14,7 @@ public class MktmpioInstanceTest extends MktmpioBaseTest {
         MktmpioInstance failed;
         prepareToRejectUnauthorized("fake-token", "redis");
         try {
-            failed = MktmpioInstance.create(mockedServer(), "fake-token", "redis", true);
+            failed = MktmpioInstance.create(mockedServer(), "fake-token", "redis");
             assertThat("result is null", failed == null);
         } catch (IOException ex) {
             assertThat(ex.getMessage(), containsString("Authentication required"));
@@ -24,7 +24,7 @@ public class MktmpioInstanceTest extends MktmpioBaseTest {
     @Test
     public void succeedsWithGoodCredentials() throws Exception {
         prepareFakeInstance("totally-legit-token", "redis");
-        MktmpioInstance redis = MktmpioInstance.create(mockedServer(), "totally-legit-token", "redis", true);
+        MktmpioInstance redis = MktmpioInstance.create(mockedServer(), "totally-legit-token", "redis");
         assertThat("result is not null", redis != null);
         assertThat(redis.getEnv().type, is("redis"));
         redis.destroy();

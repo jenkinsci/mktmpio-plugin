@@ -22,9 +22,7 @@ public class MktmpioDisposer extends Disposer {
                          final Launcher launcher, final TaskListener listener)
             throws IOException, InterruptedException {
         for (MktmpioAction env : environments) {
-            if (!env.shutdownWithBuild) {
-                Mktmpio.dispose(env, launcher, listener);
-            }
+            Mktmpio.dispose(env, launcher, listener);
         }
     }
 }

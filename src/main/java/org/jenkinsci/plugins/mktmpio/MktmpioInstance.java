@@ -15,7 +15,7 @@ public class MktmpioInstance {
         this.env = env;
     }
 
-    public static MktmpioInstance create(final String urlRoot, final String token, final String type, final boolean shutdownWithBuild) throws IOException, InterruptedException {
+    public static MktmpioInstance create(final String urlRoot, final String token, final String type) throws IOException, InterruptedException {
         final String url = urlRoot + "/api/v1/new/" + type;
         final HttpResponse<JsonNode> json = post(url, token);
         if (json.getStatus() >= 400) {
@@ -34,7 +34,7 @@ public class MktmpioInstance {
         final String username = res.optString("username", "");
         final String password = res.optString("password", "");
         final String instanceUrl = urlRoot + "/i/" + id;
-        final MktmpioAction env = new MktmpioAction(token, id, host, port, username, password, type, shutdownWithBuild, instanceUrl);
+        final MktmpioAction env = new MktmpioAction(token, id, host, port, username, password, type, instanceUrl);
         return new MktmpioInstance(env);
     }
 

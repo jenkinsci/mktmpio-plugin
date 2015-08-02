@@ -37,7 +37,6 @@ public class Mktmpio extends SimpleBuildWrapper {
 
     // Job config
     private String dbs;
-    private boolean shutdownWithBuild = false;
 
     @DataBoundConstructor
     public Mktmpio(String dbs) {
@@ -58,15 +57,6 @@ public class Mktmpio extends SimpleBuildWrapper {
     @DataBoundSetter
     public void setDbs(String dbs) {
         this.dbs = dbs;
-    }
-
-    public boolean isShutdownWithBuild() {
-        return shutdownWithBuild;
-    }
-
-    @DataBoundSetter
-    public void setShutdownWithBuild(boolean shutdownWithBuild) {
-        this.shutdownWithBuild = shutdownWithBuild;
     }
 
     @Override
@@ -102,7 +92,7 @@ public class Mktmpio extends SimpleBuildWrapper {
                 baseUrl, token.replaceAll(".", "*"), dbType);
         final MktmpioInstance instance;
         try {
-            instance = MktmpioInstance.create(baseUrl, token, dbType, isShutdownWithBuild());
+            instance = MktmpioInstance.create(baseUrl, token, dbType);
         } catch (IOException ex) {
             listener.fatalError("mktmpio: " + ex.getMessage());
             throw new InterruptedException(ex.getMessage());
