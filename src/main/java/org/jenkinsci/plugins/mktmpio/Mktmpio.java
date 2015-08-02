@@ -13,11 +13,23 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 
 public class Mktmpio extends SimpleBuildWrapper {
 
     public static final String DEFAULT_SERVER = "https://mktmp.io";
+    public static final Map<String, String> TYPES = new HashMap<String, String>(5) {{
+        put("mysql", "MySQL");
+        put("postgres", "PostgreSQL-9.4");
+        put("postgres-9.5", "PostgreSQL-9.5");
+        put("redis", "Redis");
+        put("mongodb", "MongoDB");
+    }};
+    private static final ListBoxModel TYPE_OPTIONS = new ListBoxModel(TYPES.size()){{
+        for (Map.Entry<String, String> type : TYPES.entrySet()) {
+            add(type.getValue(), type.getKey());
+        }
+    }};
 
     // Job config
     private String dbs;
@@ -59,46 +71,53 @@ public class Mktmpio extends SimpleBuildWrapper {
     }
 
     @Override
-    public void setUp(SimpleBuildWrapper.Context context,
-                      Run<?, ?> build,
-                      FilePath workspace,
-                      Launcher launcher,
-                      TaskListener listener,
-                      EnvVars initialEnvironment)
+    public void setUp(final SimpleBuildWrapper.Context context,
+                      final Run<?, ?> build,
+                      final FilePath workspace,
+                      final Launcher launcher,
+                      final TaskListener listener,
+                      final EnvVars initialEnvironment)
             throws IOException, InterruptedException {
         final DescriptorImpl config = getDescriptor();
         final String token = config.getToken();
         final String baseUrl = config.getServer();
-        final String dbType = getDbs();
+        final String dbs = getDbs();
+        final List<MktmpioEnvironment> environments = createInstances(listener, token, baseUrl, dbs);
+        for (final MktmpioEnvironment env : environments) {
+            final Map<String, String> envVars = env.envVars();
+            for (Map.Entry<String, String> entry : envVars.entrySet()) {
+                listener.getLogger().printf("setting %s=%s\n", entry.getKey(), entry.getValue());
+            }
+            build.addAction(env);
+            context.getEnv().putAll(envVars);
+        }
+        context.setDisposer(new MktmpioDisposer(environments));
+    }
+
+    private MktmpioEnvironment getMktmpioEnvironment(TaskListener listener, String token, String baseUrl, String dbType) throws InterruptedException, IOException {
+        listener.getLogger().printf("Attempting to create instance (server: %s, token: %s, type: %s)",
+                baseUrl, token.replaceAll(".", "*"), dbType);
         final MktmpioInstance instance;
         try {
-            listener.getLogger().printf("Attempting to create instance (server: %s, token: %s, type: %s)",
-                    baseUrl, token.replaceAll(".", "*"), dbType);
             instance = MktmpioInstance.create(baseUrl, token, dbType, isShutdownWithBuild());
         } catch (IOException ex) {
             listener.fatalError("mktmpio: " + ex.getMessage());
             throw new InterruptedException(ex.getMessage());
         }
         final MktmpioEnvironment env = instance.getEnv();
-        final Map<String, String> envVars = env.envVars();
         listener.hyperlink(baseUrl + "/i/" + env.id, env.type + " instance " + env.id);
         listener.getLogger().printf("mktmpio instance created: %s\n", env.type);
-        for (Map.Entry<String, String> entry : envVars.entrySet()) {
-            listener.getLogger().printf("setting %s=%s\n", entry.getKey(), entry.getValue());
-        }
-        build.addAction(env);
-        context.getEnv().putAll(envVars);
-        context.setDisposer(new MktmpioDisposer(env));
+        return env;
     }
 
-    public static ListBoxModel supportedDbTypes() {
-        ListBoxModel items = new ListBoxModel();
-        items.add("MySQL", "mysql");
-        items.add("PostgreSQL-9.4", "postgres");
-        items.add("PostgreSQL-9.5", "postgres-9.5");
-        items.add("Redis", "redis");
-        items.add("MongoDB", "mongodb");
-        return items;
+    private List<MktmpioEnvironment> createInstances(TaskListener listener, String token, String baseUrl, final String dbs) throws InterruptedException, IOException {
+        List<MktmpioEnvironment> envs = new LinkedList<MktmpioEnvironment>();
+        for (String type : dbs.split("\\s*,\\s*")) {
+            if (TYPES.containsKey(type)) {
+                envs.add(getMktmpioEnvironment(listener, token, baseUrl, type));
+            }
+        }
+        return envs;
     }
 
     @Extension
@@ -151,7 +170,7 @@ public class Mktmpio extends SimpleBuildWrapper {
         }
 
         public ListBoxModel doFillDbsItems() {
-            return supportedDbTypes();
+            return TYPE_OPTIONS;
         }
     }
 }

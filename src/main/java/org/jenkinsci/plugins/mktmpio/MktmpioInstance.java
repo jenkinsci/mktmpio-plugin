@@ -17,31 +17,35 @@ public class MktmpioInstance {
 
     public static MktmpioInstance create(final String urlRoot, final String token, final String type, final boolean shutdownWithBuild) throws IOException, InterruptedException {
         final String url = urlRoot + "/api/v1/new/" + type;
-        HttpResponse<JsonNode> json;
+        final HttpResponse<JsonNode> json = post(url, token);
+        if (json.getStatus() >= 400) {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Error creating " + type + " instance.");
+            msg.append(" Response code: " + json.getStatus());
+            msg.append(" Response message: " + json.getStatusText());
+            msg.append(" Response body: " + json.getBody().toString());
+            msg.append(" Details: " + json.getBody().getObject().optString("error", json.getStatusText()));
+            throw new IOException(msg.toString());
+        }
+        final JSONObject res = json.getBody().getObject();
+        final String id = res.getString("id");
+        final String host = res.getString("host");
+        final int port = res.getInt("port");
+        final String username = res.optString("username", "");
+        final String password = res.optString("password", "");
+        final MktmpioEnvironment env = new MktmpioEnvironment(token, id, host, port, username, password, type, shutdownWithBuild);
+        return new MktmpioInstance(env);
+    }
+
+    private static HttpResponse<JsonNode> post(final String url, final String token) throws IOException {
         try {
-            json = Unirest.post(url)
+            return Unirest.post(url)
                     .header("accept", "application/json")
                     .header("X-Auth-Token", token)
                     .asJson();
         } catch (UnirestException ex) {
-            System.err.println("Error creating instance:" + ex.getMessage());
-            throw new IOException(ex.getMessage(), ex);
+            throw new IOException("Error creating instance: " + ex.getMessage(), ex);
         }
-        if (json.getStatus() >= 400) {
-            String message = json.getBody().getObject().optString("error", json.getStatusText());
-            System.err.println("Used token: " + token);
-            System.err.println("error response: " + json.getStatusText());
-            System.err.println("response body: " + json.getBody().toString());
-            throw new IOException("Error creating " + type + " instance, " + message);
-        }
-        JSONObject res = json.getBody().getObject();
-        String id = res.getString("id");
-        String host = res.getString("host");
-        int port = res.getInt("port");
-        String username = res.optString("username", "");
-        String password = res.optString("password", "");
-        final MktmpioEnvironment env = new MktmpioEnvironment(token, id, host, port, username, password, type, shutdownWithBuild);
-        return new MktmpioInstance(env);
     }
 
     public MktmpioEnvironment getEnv() {
