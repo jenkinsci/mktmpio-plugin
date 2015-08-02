@@ -17,8 +17,9 @@ public class MktmpioEnvironment extends InvisibleAction implements Serializable 
     public final String type;
     public final boolean shutdownWithBuild;
     public final String prefix;
+    public final String url;
 
-    public MktmpioEnvironment(final String token, final String id, final String host, final int port, final String username, final String password, final String type, final boolean shutdownWithBuild) {
+    public MktmpioEnvironment(final String token, final String id, final String host, final int port, final String username, final String password, final String type, final boolean shutdownWithBuild, final String url) {
         this.token = token;
         this.id = id;
         this.host = host;
@@ -27,6 +28,7 @@ public class MktmpioEnvironment extends InvisibleAction implements Serializable 
         this.password = password;
         this.type = type;
         this.shutdownWithBuild = shutdownWithBuild;
+        this.url = url;
         this.prefix = type.toUpperCase().replaceAll("[^A-Z0-9]+", "");
     }
 
