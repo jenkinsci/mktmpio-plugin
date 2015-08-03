@@ -4,8 +4,10 @@
         <f:entry title="API Token" field="token">
             <f:textbox />
         </f:entry>
-        <f:entry title="Server" field="server">
-            <f:textbox />
-        </f:entry>
+        <f:advanced>
+            <f:entry title="Server" field="server">
+                <f:textbox />
+            </f:entry>
+        </f:advanced>
     </f:section>
 </j:jelly>
