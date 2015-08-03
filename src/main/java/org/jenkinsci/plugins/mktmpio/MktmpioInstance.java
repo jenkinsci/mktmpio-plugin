@@ -23,7 +23,8 @@ public class MktmpioInstance implements Serializable {
     public final String prefix;
     public final String url;
 
-    public MktmpioInstance(final String token, final String id, final String host, final int port, final String username, final String password, final String type, final String url) {
+    public MktmpioInstance(final String token, final String id, final String host, final int port,
+                           final String username, final String password, final String type, final String url) {
         this.token = token;
         this.id = id;
         this.host = host;
@@ -35,7 +36,8 @@ public class MktmpioInstance implements Serializable {
         this.prefix = type.toUpperCase().replaceAll("[^A-Z0-9]+", "");
     }
 
-    public static MktmpioInstance create(final String urlRoot, final String token, final String type) throws IOException, InterruptedException {
+    public static MktmpioInstance create(final String urlRoot, final String token, final String type)
+            throws IOException, InterruptedException {
         final String url = urlRoot + "/api/v1/new/" + type;
         final HttpResponse<JsonNode> json = post(url, token);
         if (json.getStatus() >= 400) {

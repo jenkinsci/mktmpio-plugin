@@ -27,7 +27,8 @@ public class MktmpioDescriptor extends BuildWrapperDescriptor {
     }
 
     @Override
-    public Mktmpio newInstance(final StaplerRequest req, final JSONObject formData) throws hudson.model.Descriptor.FormException {
+    public Mktmpio newInstance(final StaplerRequest req, final JSONObject formData)
+            throws hudson.model.Descriptor.FormException {
         return req.bindJSON(Mktmpio.class, formData);
     }
 

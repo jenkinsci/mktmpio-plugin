@@ -80,7 +80,8 @@ public class Mktmpio extends SimpleBuildWrapper {
         context.setDisposer(new MktmpioDisposer(action));
     }
 
-    private MktmpioInstance makeInstance(TaskListener listener, String token, String baseUrl, String dbType) throws InterruptedException, IOException {
+    private MktmpioInstance makeInstance(TaskListener listener, String token, String baseUrl, String dbType)
+            throws InterruptedException, IOException {
         listener.getLogger().printf("Attempting to create instance (server: %s, token: %s, type: %s)",
                 baseUrl, token.replaceAll(".", "*"), dbType);
         final MktmpioInstance instance;
@@ -95,7 +96,8 @@ public class Mktmpio extends SimpleBuildWrapper {
         return instance;
     }
 
-    private List<MktmpioInstance> makeInstances(TaskListener listener, String token, String baseUrl, final String dbs) throws InterruptedException, IOException {
+    private List<MktmpioInstance> makeInstances(TaskListener listener, String token, String baseUrl, final String dbs)
+            throws InterruptedException, IOException {
         List<MktmpioInstance> envs = new LinkedList<MktmpioInstance>();
         for (String type : dbs.split("\\s*,\\s*")) {
             if (TYPES.containsKey(type)) {
