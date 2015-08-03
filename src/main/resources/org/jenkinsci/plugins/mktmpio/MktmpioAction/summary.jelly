@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <t:summary icon="/plugin/mktmpio/images/48x48/mktmpio.png">
+    <t:summary icon="/plugin/mktmpio/images/mktmpio-48x48.png">
         Mktmpio instances:
         <ul style="margin: 0;">
             <j:forEach var="i" varStatus="st" items="${it.instances}">
