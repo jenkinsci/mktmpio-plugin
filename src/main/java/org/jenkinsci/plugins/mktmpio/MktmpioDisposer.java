@@ -7,22 +7,25 @@ import hudson.model.TaskListener;
 import jenkins.tasks.SimpleBuildWrapper.Disposer;
 
 import java.io.IOException;
-import java.util.List;
+import java.io.PrintStream;
 
 public class MktmpioDisposer extends Disposer {
     private static final long serialVersionUID = 1L;
-    private final MktmpioAction[] environments;
+    private final MktmpioAction action;
 
-    public MktmpioDisposer(final List<MktmpioAction> environments) {
-        this.environments = environments.toArray(new MktmpioAction[]{});
+    public MktmpioDisposer(final MktmpioAction action) {
+        this.action = action;
     }
 
     @Override
     public void tearDown(final Run<?, ?> run, final FilePath workspace,
                          final Launcher launcher, final TaskListener listener)
             throws IOException, InterruptedException {
-        for (MktmpioAction env : environments) {
-            Mktmpio.dispose(env, launcher, listener);
+        PrintStream log = listener.getLogger();
+        for (MktmpioInstance i : action.instances) {
+            i.destroy();
+            log.printf("mktmpio instance shutdown. type: %s, host: %s, port: %d\n", i.type, i.host, i.port);
         }
+
     }
 }

@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Mktmpio extends SimpleBuildWrapper {
-
     public static final String DEFAULT_SERVER = "https://mktmp.io";
     public static final Map<String, String> TYPES = new HashMap<String, String>(5) {{
         put("mysql", "MySQL");
@@ -41,13 +40,6 @@ public class Mktmpio extends SimpleBuildWrapper {
     @DataBoundConstructor
     public Mktmpio(String dbs) {
         this.dbs = dbs;
-    }
-
-    static void dispose(final MktmpioAction env, final Launcher launcher, final TaskListener listener) throws IOException, InterruptedException {
-        final String instanceID = env.id;
-        MktmpioInstance instance = new MktmpioInstance(env);
-        instance.destroy();
-        listener.getLogger().printf("mktmpio instance shutdown. type: %s, host: %s, port: %d\n", env.type, env.host, env.port);
     }
 
     public String getDbs() {
@@ -75,19 +67,20 @@ public class Mktmpio extends SimpleBuildWrapper {
         final String token = GLOBAL_CONFIG.getToken();
         final String baseUrl = GLOBAL_CONFIG.getServer();
         final String dbs = getDbs();
-        final List<MktmpioAction> environments = createInstances(listener, token, baseUrl, dbs);
-        for (final MktmpioAction env : environments) {
-            final Map<String, String> envVars = env.envVars();
+        final List<MktmpioInstance> instances = makeInstances(listener, token, baseUrl, dbs);
+        final MktmpioAction action = new MktmpioAction(instances);
+        for (final MktmpioInstance i : instances) {
+            final Map<String, String> envVars = i.envVars();
             for (Map.Entry<String, String> entry : envVars.entrySet()) {
                 listener.getLogger().printf("setting %s=%s\n", entry.getKey(), entry.getValue());
             }
-            build.addAction(env);
             context.getEnv().putAll(envVars);
         }
-        context.setDisposer(new MktmpioDisposer(environments));
+        build.addAction(action);
+        context.setDisposer(new MktmpioDisposer(action));
     }
 
-    private MktmpioAction getMktmpioEnvironment(TaskListener listener, String token, String baseUrl, String dbType) throws InterruptedException, IOException {
+    private MktmpioInstance makeInstance(TaskListener listener, String token, String baseUrl, String dbType) throws InterruptedException, IOException {
         listener.getLogger().printf("Attempting to create instance (server: %s, token: %s, type: %s)",
                 baseUrl, token.replaceAll(".", "*"), dbType);
         final MktmpioInstance instance;
@@ -97,17 +90,16 @@ public class Mktmpio extends SimpleBuildWrapper {
             listener.fatalError("mktmpio: " + ex.getMessage());
             throw new InterruptedException(ex.getMessage());
         }
-        final MktmpioAction env = instance.getEnv();
-        listener.hyperlink(baseUrl + "/i/" + env.id, env.type + " instance " + env.id);
-        listener.getLogger().printf("mktmpio instance created: %s\n", env.type);
-        return env;
+        listener.hyperlink(baseUrl + "/i/" + instance.id, instance.type + " instance " + instance.id);
+        listener.getLogger().printf("mktmpio instance created: %s\n", instance.type);
+        return instance;
     }
 
-    private List<MktmpioAction> createInstances(TaskListener listener, String token, String baseUrl, final String dbs) throws InterruptedException, IOException {
-        List<MktmpioAction> envs = new LinkedList<MktmpioAction>();
+    private List<MktmpioInstance> makeInstances(TaskListener listener, String token, String baseUrl, final String dbs) throws InterruptedException, IOException {
+        List<MktmpioInstance> envs = new LinkedList<MktmpioInstance>();
         for (String type : dbs.split("\\s*,\\s*")) {
             if (TYPES.containsKey(type)) {
-                envs.add(getMktmpioEnvironment(listener, token, baseUrl, type));
+                envs.add(makeInstance(listener, token, baseUrl, type));
             }
         }
         return envs;

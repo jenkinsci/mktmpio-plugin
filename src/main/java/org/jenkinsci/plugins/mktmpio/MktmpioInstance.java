@@ -7,12 +7,32 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MktmpioInstance {
-    private final MktmpioAction env;
+public class MktmpioInstance implements Serializable {
+    private static final long serialVersionUID = 1L;
+    public final String token;
+    public final String id;
+    public final String host;
+    public final int port;
+    public final String username;
+    public final String password;
+    public final String type;
+    public final String prefix;
+    public final String url;
 
-    public MktmpioInstance(final MktmpioAction env) {
-        this.env = env;
+    public MktmpioInstance(final String token, final String id, final String host, final int port, final String username, final String password, final String type, final String url) {
+        this.token = token;
+        this.id = id;
+        this.host = host;
+        this.port = port;
+        this.username = username;
+        this.password = password;
+        this.type = type;
+        this.url = url;
+        this.prefix = type.toUpperCase().replaceAll("[^A-Z0-9]+", "");
     }
 
     public static MktmpioInstance create(final String urlRoot, final String token, final String type) throws IOException, InterruptedException {
@@ -34,8 +54,7 @@ public class MktmpioInstance {
         final String username = res.optString("username", "");
         final String password = res.optString("password", "");
         final String instanceUrl = urlRoot + "/i/" + id;
-        final MktmpioAction env = new MktmpioAction(token, id, host, port, username, password, type, instanceUrl);
-        return new MktmpioInstance(env);
+        return new MktmpioInstance(token, id, host, port, username, password, type, instanceUrl);
     }
 
     private static HttpResponse<JsonNode> post(final String url, final String token) throws IOException {
@@ -49,18 +68,29 @@ public class MktmpioInstance {
         }
     }
 
-    public MktmpioAction getEnv() {
-        return this.env;
-    }
-
     public void destroy() throws IOException {
         try {
-            Unirest.delete("https://mktmp.io/api/v1/i/" + env.id)
+            Unirest.delete("https://mktmp.io/api/v1/i/" + id)
                     .header("accept", "application/json")
-                    .header("X-Auth-Token", env.token)
+                    .header("X-Auth-Token", token)
                     .asJson();
         } catch (UnirestException ex) {
-            throw new IOException("Failed to terminate instance " + env.id, ex);
+            throw new IOException("Failed to terminate instance " + id, ex);
         }
+    }
+
+    public Map<String, String> envVars() {
+        Map<String, String> vars = new HashMap<String, String>(6);
+        vars.put(prefixed("HOST"), host);
+        vars.put(prefixed("PORT"), Integer.toString(port));
+        vars.put(prefixed("USERNAME"), username);
+        vars.put(prefixed("PASSWORD"), password);
+        vars.put(prefixed("ID"), id);
+        vars.put(prefixed("TYPE"), type);
+        return vars;
+    }
+
+    private String prefixed(final String name) {
+        return this.prefix + "_" + name;
     }
 }
