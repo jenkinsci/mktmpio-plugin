@@ -18,6 +18,7 @@ public class MktmpioDescriptor extends BuildWrapperDescriptor {
         load();
     }
 
+    // TODO: needs test coverage
     @Override
     public boolean configure(final StaplerRequest req, final JSONObject formData) {
         token = formData.getString("token");
@@ -26,6 +27,7 @@ public class MktmpioDescriptor extends BuildWrapperDescriptor {
         return true;
     }
 
+    // TODO: needs test coverage
     @Override
     public Mktmpio newInstance(final StaplerRequest req, final JSONObject formData)
             throws hudson.model.Descriptor.FormException {

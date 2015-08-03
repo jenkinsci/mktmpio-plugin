@@ -91,7 +91,12 @@
             <version>1.57</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.shazam</groupId>
+            <artifactId>shazamcrest</artifactId>
+            <version>0.11</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-job</artifactId>

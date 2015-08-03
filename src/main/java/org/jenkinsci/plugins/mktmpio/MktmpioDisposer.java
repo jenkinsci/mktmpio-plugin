@@ -22,10 +22,15 @@ public class MktmpioDisposer extends Disposer {
                          final Launcher launcher, final TaskListener listener)
             throws IOException, InterruptedException {
         PrintStream log = listener.getLogger();
-        for (MktmpioInstance i : action.instances) {
-            i.destroy();
-            log.printf("mktmpio instance shutdown. type: %s, host: %s, port: %d\n", i.type, i.host, i.port);
+        MktmpioClient mktmpio = getAction().getClient();
+        for (MktmpioInstance i : getAction().getInstances()) {
+            mktmpio.destroy(i);
+            log.printf("mktmpio instance shutdown. type: %s, host: %s, port: %d\n", i.getType(), i.getHost(), i.getPort());
         }
 
+    }
+
+    public MktmpioAction getAction() {
+        return action;
     }
 }

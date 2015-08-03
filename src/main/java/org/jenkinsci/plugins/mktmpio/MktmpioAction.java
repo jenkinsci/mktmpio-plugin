@@ -3,13 +3,22 @@ package org.jenkinsci.plugins.mktmpio;
 import hudson.model.InvisibleAction;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class MktmpioAction extends InvisibleAction implements Serializable {
-    private static final long serialVersionUID = 1L;
-    public final MktmpioInstance[] instances;
+public final class MktmpioAction extends InvisibleAction implements Serializable {
+    private static final long serialVersionUID = 2L;
+    private final MktmpioClient client;
+    private final MktmpioInstance[] instances;
 
-    public MktmpioAction(final List<MktmpioInstance> instances) {
-        this.instances = instances.toArray(new MktmpioInstance[]{});
+    public MktmpioAction(final MktmpioClient client, final MktmpioInstance[] instances) {
+        this.client = client;
+        this.instances = instances;
+    }
+
+    public MktmpioClient getClient() {
+        return client;
+    }
+
+    public MktmpioInstance[] getInstances() {
+        return instances;
     }
 }

@@ -67,8 +67,9 @@ public class Mktmpio extends SimpleBuildWrapper {
         final String token = GLOBAL_CONFIG.getToken();
         final String baseUrl = GLOBAL_CONFIG.getServer();
         final String dbs = getDbs();
-        final List<MktmpioInstance> instances = makeInstances(listener, token, baseUrl, dbs);
-        final MktmpioAction action = new MktmpioAction(instances);
+        final MktmpioClient client = new MktmpioClient(baseUrl, token);
+        final MktmpioInstance[] instances = makeInstances(listener, client, dbs);
+        final MktmpioAction action = new MktmpioAction(client, instances);
         for (final MktmpioInstance i : instances) {
             final Map<String, String> envVars = i.envVars();
             for (Map.Entry<String, String> entry : envVars.entrySet()) {
@@ -80,30 +81,30 @@ public class Mktmpio extends SimpleBuildWrapper {
         context.setDisposer(new MktmpioDisposer(action));
     }
 
-    private MktmpioInstance makeInstance(TaskListener listener, String token, String baseUrl, String dbType)
+    private MktmpioInstance makeInstance(TaskListener listener, MktmpioClient client, String dbType)
             throws InterruptedException, IOException {
-        listener.getLogger().printf("Attempting to create instance (server: %s, token: %s, type: %s)",
-                baseUrl, token.replaceAll(".", "*"), dbType);
+        listener.getLogger().printf("Attempting to create instance (client: %s, type: %s)",
+                client, dbType);
         final MktmpioInstance instance;
         try {
-            instance = MktmpioInstance.create(baseUrl, token, dbType);
+            instance = client.create(dbType);
         } catch (IOException ex) {
             listener.fatalError("mktmpio: " + ex.getMessage());
             throw new InterruptedException(ex.getMessage());
         }
-        listener.hyperlink(baseUrl + "/i/" + instance.id, instance.type + " instance " + instance.id);
-        listener.getLogger().printf("mktmpio instance created: %s\n", instance.type);
+        listener.hyperlink(instance.getUrl(), instance.getType() + " instance " + instance.getId());
+        listener.getLogger().printf("mktmpio instance created: %s\n", instance.getType());
         return instance;
     }
 
-    private List<MktmpioInstance> makeInstances(TaskListener listener, String token, String baseUrl, final String dbs)
+    private MktmpioInstance[] makeInstances(TaskListener listener, MktmpioClient client, final String dbs)
             throws InterruptedException, IOException {
         List<MktmpioInstance> envs = new LinkedList<MktmpioInstance>();
         for (String type : dbs.split("\\s*,\\s*")) {
             if (TYPES.containsKey(type)) {
-                envs.add(makeInstance(listener, token, baseUrl, type));
+                envs.add(makeInstance(listener, client, type));
             }
         }
-        return envs;
+        return envs.toArray(new MktmpioInstance[]{});
     }
 }
