@@ -61,7 +61,7 @@ public class MktmpioClient implements Serializable {
 
     public void destroy(final MktmpioInstance instance) throws IOException {
         try {
-            apiReq(Unirest.delete("https://mktmp.io/api/v1/i/" + instance.getId())).asJson();
+            apiReq(Unirest.delete(getUrlRoot() + "/api/v1/i/" + instance.getId())).asJson();
         } catch (UnirestException ex) {
             // TODO: needs test coverage
             throw new IOException("Failed to terminate instance " + instance.getId(), ex);
