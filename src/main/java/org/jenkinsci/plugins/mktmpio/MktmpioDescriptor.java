@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.mktmpio;
 
-import hudson.CopyOnWrite;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildWrapperDescriptor;
 import hudson.util.ListBoxModel;
@@ -8,10 +7,11 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
 
-public class MktmpioDescriptor extends BuildWrapperDescriptor {
+import javax.annotation.Nonnull;
 
-    @CopyOnWrite
-    private String token, server = Mktmpio.DEFAULT_SERVER;
+public class MktmpioDescriptor extends BuildWrapperDescriptor {
+    private String token = "";
+    private String server = Mktmpio.DEFAULT_SERVER;
 
     public MktmpioDescriptor() {
         super(Mktmpio.class);
@@ -34,32 +34,43 @@ public class MktmpioDescriptor extends BuildWrapperDescriptor {
         return req.bindJSON(Mktmpio.class, formData);
     }
 
+    @Nonnull
     public String getToken() {
         return token;
     }
 
     @DataBoundSetter
     public void setToken(String token) {
-        this.token = token;
+        if (token == null)
+            this.token = "";
+        else
+            this.token = token;
     }
 
+    @Nonnull
     public String getServer() {
         return server;
     }
 
     @DataBoundSetter
     public void setServer(String server) {
-        this.server = server;
+        if (server == null || server.isEmpty())
+            this.server = Mktmpio.DEFAULT_SERVER;
+        else
+            this.server = server;
     }
 
     public boolean isApplicable(AbstractProject<?, ?> item) {
         return true;
     }
 
+    @Nonnull
     public String getDisplayName() {
         return "Create temporary database server for build";
     }
 
+    @SuppressWarnings("SameReturnValue")
+    @Nonnull
     public ListBoxModel doFillDbsItems() {
         return Mktmpio.TYPE_OPTIONS;
     }

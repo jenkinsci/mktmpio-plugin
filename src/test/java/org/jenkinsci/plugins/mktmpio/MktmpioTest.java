@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.not;
 
 public class MktmpioTest extends MktmpioBaseTest {
     @Rule
-    public JenkinsRule j = new JenkinsRule();
+    public final JenkinsRule j = new JenkinsRule();
 
     @Before
     public void setServer() {

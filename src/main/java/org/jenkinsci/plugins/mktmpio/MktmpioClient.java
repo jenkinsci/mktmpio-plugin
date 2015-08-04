@@ -7,10 +7,12 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.HttpRequestWithBody;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Serializable;
 
-public final class MktmpioClient implements Serializable {
+public class MktmpioClient implements Serializable {
+    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
     private final String urlRoot;
     private final String token;
@@ -28,18 +30,14 @@ public final class MktmpioClient implements Serializable {
                 '}';
     }
 
+    @Nonnull
     public MktmpioInstance create(final String type)
-            throws IOException, InterruptedException {
+            throws IOException {
         final String url = getUrlRoot() + "/api/v1/new/" + type;
-        final HttpResponse<JsonNode> json = post(url, getToken());
+        final HttpResponse<JsonNode> json = post(url);
         if (json.getStatus() >= 400) {
-            StringBuilder msg = new StringBuilder();
-            msg.append("Error creating " + type + " instance.");
-            msg.append(" Response code: " + json.getStatus());
-            msg.append(" Response message: " + json.getStatusText());
-            msg.append(" Response body: " + json.getBody().toString());
-            msg.append(" Details: " + json.getBody().getObject().optString("error", json.getStatusText()));
-            throw new IOException(msg.toString());
+            final String msg = "Error creating " + type + " instance." + " Response code: " + json.getStatus() + " Response message: " + json.getStatusText() + " Response body: " + json.getBody().toString() + " Details: " + json.getBody().getObject().optString("error", json.getStatusText());
+            throw new IOException(msg);
         }
         final JSONObject res = json.getBody().getObject();
         final String id = res.getString("id");
@@ -51,7 +49,8 @@ public final class MktmpioClient implements Serializable {
         return new MktmpioInstance(id, host, port, username, password, type, instanceUrl);
     }
 
-    private HttpResponse<JsonNode> post(final String url, final String token) throws IOException {
+    @Nonnull
+    private HttpResponse<JsonNode> post(final String url) throws IOException {
         try {
             return apiReq(Unirest.post(url)).asJson();
         } catch (UnirestException ex) {
@@ -69,16 +68,21 @@ public final class MktmpioClient implements Serializable {
         }
     }
 
+    @Nonnull
     private HttpRequestWithBody apiReq(HttpRequestWithBody original) {
         return original
                 .header("accept", "application/json")
                 .header("X-Auth-Token", getToken());
     }
 
+    @SuppressWarnings("WeakerAccess")
+    @Nonnull
     public String getUrlRoot() {
         return urlRoot;
     }
 
+    @SuppressWarnings("WeakerAccess")
+    @Nonnull
     public String getToken() {
         return token;
     }

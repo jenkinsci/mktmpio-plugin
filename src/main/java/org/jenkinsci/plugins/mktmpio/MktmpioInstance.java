@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.mktmpio;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,13 +22,14 @@ public class MktmpioInstance implements Serializable {
         this.id = id;
         this.host = host;
         this.port = port;
-        this.username = username;
-        this.password = password;
+        this.username = username == null ? "" : username;
+        this.password = password == null ? "" : password;
         this.type = type;
         this.url = url;
         this.prefix = type.toUpperCase().replaceAll("[^A-Z0-9]+", "");
     }
 
+    @Nonnull
     public Map<String, String> envVars() {
         Map<String, String> vars = new HashMap<String, String>(6);
         vars.put(prefixed("HOST"), getHost());
@@ -38,38 +41,47 @@ public class MktmpioInstance implements Serializable {
         return vars;
     }
 
-    private String prefixed(final String name) {
+    @Nonnull
+    private String prefixed(@Nonnull final String name) {
         return this.getPrefix() + "_" + name;
     }
 
+    @Nonnull
     public String getId() {
         return id;
     }
 
+    @Nonnull
     public String getHost() {
         return host;
     }
 
+    @Nonnegative
     public int getPort() {
         return port;
     }
 
+    @Nonnull
     public String getUsername() {
         return username;
     }
 
+    @Nonnull
     public String getPassword() {
         return password;
     }
 
+    @Nonnull
     public String getType() {
         return type;
     }
 
-    public String getPrefix() {
+    @Nonnull
+    private String getPrefix() {
         return prefix;
     }
 
+    @Nonnull
     public String getUrl() {
         return url;
     }

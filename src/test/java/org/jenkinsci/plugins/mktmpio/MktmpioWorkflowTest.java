@@ -16,14 +16,14 @@ import org.jvnet.hudson.test.RestartableJenkinsRule;
 public class MktmpioWorkflowTest extends MktmpioBaseTest {
 
     @Rule
-    public RestartableJenkinsRule restartableSystem = new RestartableJenkinsRule();
+    public final RestartableJenkinsRule restartableSystem = new RestartableJenkinsRule();
 
     @Before
     public void configureMock() {
         prepareFakeInstance("totally-legit-token", "redis");
     }
 
-    public void configureMktmpio() {
+    private void configureMktmpio() {
         getConfig().setToken("totally-legit-token");
         getConfig().setServer(mockedServer());
     }

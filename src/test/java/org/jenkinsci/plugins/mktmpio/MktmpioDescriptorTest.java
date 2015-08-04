@@ -5,26 +5,22 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
 
 public class MktmpioDescriptorTest {
     @Rule
-    public JenkinsRule j = new JenkinsRule();
+    public final JenkinsRule j = new JenkinsRule().withNewHome();
 
     @Test
-    public void testToken() throws Exception {
+    public void testDefaults() throws Exception {
         MktmpioDescriptor config = getDescriptor();
+        assertThat(config.getToken(), isEmptyString());
+        assertThat(config.getServer(), is(Mktmpio.DEFAULT_SERVER));
         config.setToken("something");
-        assertThat(config.getToken(), is(equalTo("something")));
-    }
-
-    @Test
-    public void testServer() throws Exception {
-        MktmpioDescriptor config = getDescriptor();
-        assertThat(config.getServer(), is(equalTo(Mktmpio.DEFAULT_SERVER)));
+        assertThat(config.getToken(), is("something"));
         config.setServer("something-else");
-        assertThat(config.getServer(), is(equalTo("something-else")));
+        assertThat(config.getServer(), is("something-else"));
     }
 
     private MktmpioDescriptor getDescriptor() {

@@ -11,7 +11,7 @@ import static org.jenkinsci.plugins.mktmpio.MktmpioTestUtil.roundTrip;
 
 public class MktmpioInstanceTest {
     @Test
-    public void preservesProperties() throws Exception {
+    public void preservesProperties() {
         MktmpioInstance simple = new MktmpioInstance("id", "host", 1, "username", "password", "type", "url");
         assertThat(simple.getId(), is("id"));
         assertThat(simple.getHost(), is("host"));
@@ -23,7 +23,7 @@ public class MktmpioInstanceTest {
     }
 
     @Test
-    public void producesNamespacedEnvironmentVariables() throws Exception {
+    public void producesPrefixedEnvironmentVariables() {
         MktmpioInstance simple = new MktmpioInstance("id", "host", 1, "username", "password", "type", "url");
         Map<String, String> env = simple.envVars();
         assertThat(env.size(), is(6));
@@ -37,7 +37,7 @@ public class MktmpioInstanceTest {
     }
 
     @Test
-    public void serializesAndDeserializes() throws Exception {
+    public void testSerializationRoundTrip() throws Exception {
         MktmpioInstance given = new MktmpioInstance("id", "host", 1, "username", "password", "type", "url");
         assertThat(given, is(sameBeanAs(roundTrip(given))));
     }

@@ -5,7 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class MktmpioTestUtil {
+class MktmpioTestUtil {
+    @SuppressWarnings("unchecked")
     public static <G> G roundTrip(G given) throws Exception {
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         final ObjectOutputStream out = new ObjectOutputStream(bytes);

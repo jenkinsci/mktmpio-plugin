@@ -6,14 +6,16 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.tasks.SimpleBuildWrapper.Disposer;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.PrintStream;
 
+@SuppressWarnings("WeakerAccess")
 public class MktmpioDisposer extends Disposer {
     private static final long serialVersionUID = 1L;
     private final MktmpioAction action;
 
-    public MktmpioDisposer(final MktmpioAction action) {
+    public MktmpioDisposer(@Nonnull final MktmpioAction action) {
         this.action = action;
     }
 
@@ -30,6 +32,8 @@ public class MktmpioDisposer extends Disposer {
 
     }
 
+    @SuppressWarnings("WeakerAccess")
+    @Nonnull
     public MktmpioAction getAction() {
         return action;
     }

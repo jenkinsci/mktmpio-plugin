@@ -1,40 +1,38 @@
 <div>
     Specify the type of temporary database to create.
-    <p>
-        Credentials for each database server will be exposed as environment variables with a <i>PREFIX_</i> based on the
-        type of server.
-        <dl>
-            <dt><i>TYPE</i>_HOST</dt>
-            <dd>
-                hostname or IP of database server.
-                Example: Redis would be <code>REDIS_HOST=i.mktmp.io</code>
-            </dd>
-            <dt><i>TYPE</i>_PORT</dt>
-            <dd>
-                port the server is listening on.
-                Example: Postgres would be <code>POSTGRES_PORT=54321</code>
-            </dd>
-            <dt><i>TYPE</i>_USERNAME</dt>
-            <dd>
-                root-level user to use when connecting to the server, if required.
-                Example: Postgres-9.5 would be <code>POSTGRES95_USERNAME=postgres</code>
-            </dd>
-            <dt><i>TYPE</i>_PASSWORD</dt>
-            <dd>
-                password for server, if required.
-                Example: MySQL would be <code>MYSQL_PASSWORD=abcdefg</code>
-            </dd>
-            <dt><i>TYPE</i>_ID</dt>
-            <dd>
-                mktmpio instance id, which can be useful for debugging.
-                Example: MongoDB would be <code>MONGODB_ID=1a2c4f3d</code>
-            </dd>
-            <dt><i>TYPE</i>_TYPE</dt>
-            <dd>
-                type of server that has been created
-                Example: PostgreSQL-9.5 would be <code>MONGODB_TYPE=postgres-9.5</code>
-            </dd>
-        </dl>
-    </p>
-
+    <br />
+    Credentials for each database server will be exposed as environment variables with a <i>PREFIX_</i> based on the
+    type of server.
+    <dl>
+        <dt><i>TYPE</i>_HOST</dt>
+        <dd>
+            hostname or IP of database server.
+            Example: Redis would be <code>REDIS_HOST=i.mktmp.io</code>
+        </dd>
+        <dt><i>TYPE</i>_PORT</dt>
+        <dd>
+            port the server is listening on.
+            Example: Postgres would be <code>POSTGRES_PORT=54321</code>
+        </dd>
+        <dt><i>TYPE</i>_USERNAME</dt>
+        <dd>
+            root-level user to use when connecting to the server, if required.
+            Example: Postgres-9.5 would be <code>POSTGRES95_USERNAME=postgres</code>
+        </dd>
+        <dt><i>TYPE</i>_PASSWORD</dt>
+        <dd>
+            password for server, if required.
+            Example: MySQL would be <code>MYSQL_PASSWORD=1a2c4f3d</code>
+        </dd>
+        <dt><i>TYPE</i>_ID</dt>
+        <dd>
+            mktmpio instance id, which can be useful for debugging.
+            Example: MongoDB would be <code>MONGODB_ID=1a2c4f3d</code>
+        </dd>
+        <dt><i>TYPE</i>_TYPE</dt>
+        <dd>
+            type of server that has been created
+            Example: PostgreSQL-9.5 would be <code>MONGODB_TYPE=postgres-9.5</code>
+        </dd>
+    </dl>
 </div>

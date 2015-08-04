@@ -12,14 +12,16 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class Mktmpio extends SimpleBuildWrapper {
     public static final String DEFAULT_SERVER = "https://mktmp.io";
-    public static final Map<String, String> TYPES = new HashMap<String, String>(5) {{
+    @SuppressWarnings("WeakerAccess")
+    @Extension
+    public static final MktmpioDescriptor GLOBAL_CONFIG = new MktmpioDescriptor();
+    private static final Map<String, String> TYPES = new HashMap<String, String>(5) {{
         put("mysql", "MySQL");
         put("postgres", "PostgreSQL-9.4");
         put("postgres-9.5", "PostgreSQL-9.5");
@@ -31,9 +33,6 @@ public class Mktmpio extends SimpleBuildWrapper {
             add(type.getValue(), type.getKey());
         }
     }};
-    @Extension
-    public static final MktmpioDescriptor GLOBAL_CONFIG = new MktmpioDescriptor();
-
     // Job config
     private String dbs;
 
@@ -42,6 +41,7 @@ public class Mktmpio extends SimpleBuildWrapper {
         this.dbs = dbs;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public String getDbs() {
         return dbs;
     }
@@ -99,12 +99,12 @@ public class Mktmpio extends SimpleBuildWrapper {
 
     private MktmpioInstance[] makeInstances(TaskListener listener, MktmpioClient client, final String dbs)
             throws InterruptedException, IOException {
-        List<MktmpioInstance> envs = new LinkedList<MktmpioInstance>();
+        final ArrayList<MktmpioInstance> instances = new ArrayList<MktmpioInstance>();
         for (String type : dbs.split("\\s*,\\s*")) {
             if (TYPES.containsKey(type)) {
-                envs.add(makeInstance(listener, client, type));
+                instances.add(makeInstance(listener, client, type));
             }
         }
-        return envs.toArray(new MktmpioInstance[]{});
+        return instances.toArray(new MktmpioInstance[instances.size()]);
     }
 }
