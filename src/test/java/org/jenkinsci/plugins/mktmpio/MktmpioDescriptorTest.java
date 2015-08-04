@@ -15,6 +15,8 @@ public class MktmpioDescriptorTest {
     @Test
     public void testDefaults() throws Exception {
         MktmpioDescriptor config = getDescriptor();
+        config.setToken("");
+        config.setServer("");
         assertThat(config.getToken(), isEmptyString());
         assertThat(config.getServer(), is(Mktmpio.DEFAULT_SERVER));
         config.setToken("something");
