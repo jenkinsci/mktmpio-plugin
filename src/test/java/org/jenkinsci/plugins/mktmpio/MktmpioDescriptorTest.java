@@ -14,16 +14,25 @@ public class MktmpioDescriptorTest {
     public static final JenkinsRule j = new JenkinsRule().withNewHome();
 
     @Test
-    public void testDefaults() throws Exception {
+    public void testServerDefault() throws Exception {
         final MktmpioDescriptor config = getDescriptor();
-        config.setToken("");
         config.setServer("");
-        assertThat(config.getToken(), isEmptyString());
         assertThat(config.getServer(), is(Mktmpio.DEFAULT_SERVER));
-        config.setToken("something");
-        assertThat(config.getToken(), is("something"));
         config.setServer("something-else");
         assertThat(config.getServer(), is("something-else"));
+        config.setServer(null);
+        assertThat(config.getServer(), is(Mktmpio.DEFAULT_SERVER));
+    }
+
+    @Test
+    public void testTokenDefault() throws Exception {
+        final MktmpioDescriptor config = getDescriptor();
+        config.setToken("");
+        assertThat(config.getToken(), isEmptyString());
+        config.setToken("something");
+        assertThat(config.getToken(), is("something"));
+        config.setToken(null);
+        assertThat(config.getToken(), isEmptyString());
     }
 
     @Test
