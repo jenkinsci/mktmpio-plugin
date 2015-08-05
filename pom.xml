@@ -26,7 +26,8 @@
 
     <properties>
         <workflow.version>1.8</workflow.version>
-        <surefire.timeout>300</surefire.timeout>
+        <surefire.timeout>500</surefire.timeout>
+        <forkCount>0</forkCount>
         <!--<parallel>suites</parallel>-->
         <!--<threadCount>8</threadCount>-->
     </properties>
