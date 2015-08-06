@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.mktmpio;
 
 import hudson.model.FreeStyleProject;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
@@ -10,8 +10,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 
 public class MktmpioDescriptorTest {
-    @ClassRule
-    public static final JenkinsRule j = new JenkinsRule().withNewHome();
+    @Rule
+    public final JenkinsRule j = new JenkinsRule().withNewHome();
 
     @Test
     public void testServerDefault() throws Exception {
