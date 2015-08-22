@@ -1,9 +1,11 @@
 package org.jenkinsci.plugins.mktmpio;
 
 import com.github.tomakehurst.wiremock.client.RequestPatternBuilder;
+import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
-import org.junit.AfterClass;
+import hudson.Util;
+import org.junit.After;
 import org.junit.ClassRule;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -41,11 +43,13 @@ public class MktmpioBaseTest {
                 ));
     }
 
-    @AfterClass
-    public static void dumpRequests() {
-        System.out.println("Requests:");
+    @After
+    public void dumpRequests() {
         for (LoggedRequest req : wireMockRule.findAll(RequestPatternBuilder.allRequests())) {
-            System.out.println(req.getUrl() + req.getHeaders());
+            System.out.printf("%s %s\n", req.getMethod(), req.getUrl());
+            for (HttpHeader h : req.getHeaders().all()) {
+                System.out.printf("  %s: %s\n", h.key(), Util.join(h.values(), "; "));
+            }
         }
     }
 }

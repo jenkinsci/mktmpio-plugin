@@ -16,8 +16,7 @@ import java.util.Map;
 
 public class Mktmpio extends SimpleBuildWrapper {
     public static final String DEFAULT_SERVER = "https://mktmp.io";
-    public static final String VERSION = Jenkins.getActiveInstance().getPlugin("mktmpio").getWrapper().getVersion();
-    public static final String USER_AGENT = "mktmpio-jenkins-plugin/" + VERSION;
+    public static final String USER_AGENT = makeUserAgent();
     @SuppressWarnings("WeakerAccess")
     @Extension
     public static final MktmpioDescriptor GLOBAL_CONFIG = new MktmpioDescriptor();
@@ -39,6 +38,20 @@ public class Mktmpio extends SimpleBuildWrapper {
     @DataBoundConstructor
     public Mktmpio(String dbs) {
         this.dbs = dbs;
+    }
+
+    private static String makeUserAgent() {
+        final Jenkins jenkins = Jenkins.getInstance();
+        final PluginWrapper wrapper = jenkins.getPlugin("mktmpio").getWrapper();
+        final String pluginUA = String.format("mktmpio-jenkins-plugin/%s", wrapper.getVersion());
+        final String jenkinsUA = String.format("Jenkins/%s (%s; %s; %s)",
+                Jenkins.getVersion(),
+                System.getProperty("os.name", "Unknown OS name"),
+                System.getProperty("os.arch", "Unknown OS arch"),
+                System.getProperty("os.version", "Unknown OS version"));
+        final String defaultJavaUA = String.format("Java/%s", System.getProperty("java.version"));
+        final String javaUA = System.getProperty("http.agent", defaultJavaUA);
+        return String.format("%s %s %s", pluginUA, jenkinsUA, javaUA);
     }
 
     @SuppressWarnings("WeakerAccess")
