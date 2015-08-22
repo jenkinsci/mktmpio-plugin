@@ -75,11 +75,16 @@
             <plugin>
                 <groupId>org.jenkins-ci.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
-                <version>1.106</version>
+                <version>1.114</version>
                 <configuration>
                     <injectedTestName>InjectIT</injectedTestName>
                     <dependencyResolution>runtime</dependencyResolution>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.2</version>
             </plugin>
         </plugins>
     </build>
