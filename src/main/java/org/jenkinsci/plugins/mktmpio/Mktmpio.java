@@ -1,12 +1,10 @@
 package org.jenkinsci.plugins.mktmpio;
 
-import hudson.EnvVars;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
+import hudson.*;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildWrapper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -18,6 +16,8 @@ import java.util.Map;
 
 public class Mktmpio extends SimpleBuildWrapper {
     public static final String DEFAULT_SERVER = "https://mktmp.io";
+    public static final String VERSION = Jenkins.getActiveInstance().getPlugin("mktmpio").getWrapper().getVersion();
+    public static final String USER_AGENT = "mktmpio-jenkins-plugin/" + VERSION;
     @SuppressWarnings("WeakerAccess")
     @Extension
     public static final MktmpioDescriptor GLOBAL_CONFIG = new MktmpioDescriptor();
@@ -67,7 +67,7 @@ public class Mktmpio extends SimpleBuildWrapper {
         final String token = GLOBAL_CONFIG.getToken();
         final String baseUrl = GLOBAL_CONFIG.getServer();
         final String dbs = getDbs();
-        final MktmpioClient client = new MktmpioClient(baseUrl, token);
+        final MktmpioClient client = new MktmpioClient(baseUrl, token, USER_AGENT);
         final MktmpioInstance[] instances = makeInstances(listener, client, dbs);
         final MktmpioAction action = new MktmpioAction(client, instances);
         for (final MktmpioInstance i : instances) {

@@ -16,10 +16,12 @@ public class MktmpioClient implements Serializable {
     private static final long serialVersionUID = 1L;
     private final String urlRoot;
     private final String token;
+    private final String userAgent;
 
-    public MktmpioClient(final String urlRoot, final String token) {
+    public MktmpioClient(final String urlRoot, final String token, String userAgent) {
         this.urlRoot = urlRoot;
         this.token = token;
+        this.userAgent = userAgent;
     }
 
     @Override
@@ -72,6 +74,7 @@ public class MktmpioClient implements Serializable {
     private HttpRequestWithBody apiReq(HttpRequestWithBody original) {
         return original
                 .header("accept", "application/json")
+                .header("User-Agent", userAgent)
                 .header("X-Auth-Token", getToken());
     }
 

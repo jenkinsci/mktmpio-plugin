@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.not;
 public class MktmpioClientTest extends MktmpioBaseTest {
     @Test
     public void testFailsWithBadCredentials() throws Exception {
-        MktmpioClient client = new MktmpioClient(mockedServer(), "fake-token");
+        MktmpioClient client = new MktmpioClient(mockedServer(), "fake-token", "mktmpio-jenkins-plugin");
         prepareToRejectUnauthorized("fake-token", "redis");
         try {
             client.create("redis");
@@ -25,7 +25,7 @@ public class MktmpioClientTest extends MktmpioBaseTest {
 
     @Test
     public void testSucceedsWithGoodCredentials() throws Exception {
-        MktmpioClient client = new MktmpioClient(mockedServer(), "totally-legit-token");
+        MktmpioClient client = new MktmpioClient(mockedServer(), "totally-legit-token", "mktmpio-jenkins-plugin");
         prepareFakeInstance("totally-legit-token", "redis");
         MktmpioInstance redis = client.create("redis");
         assertThat(redis.getUsername(), isEmptyString());
@@ -35,7 +35,7 @@ public class MktmpioClientTest extends MktmpioBaseTest {
 
     @Test
     public void testOfflineCreate() throws Exception {
-        MktmpioClient client = new MktmpioClient("http://127.0.0.1:1", "does-not-matter");
+        MktmpioClient client = new MktmpioClient("http://127.0.0.1:1", "does-not-matter", "mktmpio-jenkins-plugin");
         try {
             client.create("redis");
             org.junit.Assert.fail("should client.create should have thrown");
@@ -47,7 +47,7 @@ public class MktmpioClientTest extends MktmpioBaseTest {
 
     @Test
     public void testOfflineDestroy() throws Exception {
-        final MktmpioClient client = new MktmpioClient("http://127.0.0.1:1", "does-not-matter");
+        final MktmpioClient client = new MktmpioClient("http://127.0.0.1:1", "does-not-matter", "mktmpio-jenkins-plugin");
         final MktmpioInstance instance = new MktmpioInstance("", "", 0, "", "", "", "");
         try {
             client.destroy(instance);

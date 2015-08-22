@@ -1,6 +1,9 @@
 package org.jenkinsci.plugins.mktmpio;
 
+import com.github.tomakehurst.wiremock.client.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
+import org.junit.AfterClass;
 import org.junit.ClassRule;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -16,6 +19,7 @@ public class MktmpioBaseTest {
     static void prepareToRejectUnauthorized(final String token, final String type) {
         stubFor(post(urlEqualTo("/api/v1/new/" + type))
                 .withHeader("X-Auth-Token", equalTo(token))
+                .withHeader("User-Agent", containing("mktmpio-jenkins-plugin"))
                 .willReturn(aResponse()
                         .withStatus(403)
                         .withBody("{\"error\":\"Authentication required\"}")));
@@ -25,6 +29,7 @@ public class MktmpioBaseTest {
         final String instance = "{\"id\":\"01ab34cd56ef\",\"host\":\"12.34.56.78\",\"port\":54321,\"type\":\"" + type + "\"}";
         stubFor(post(urlEqualTo("/api/v1/new/" + type))
                 .withHeader("X-Auth-Token", equalTo(token))
+                .withHeader("User-Agent", containing("mktmpio-jenkins-plugin"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withStatus(201)
@@ -34,5 +39,13 @@ public class MktmpioBaseTest {
                 .willReturn(aResponse()
                                 .withStatus(201)
                 ));
+    }
+
+    @AfterClass
+    public static void dumpRequests() {
+        System.out.println("Requests:");
+        for (LoggedRequest req : wireMockRule.findAll(RequestPatternBuilder.allRequests())) {
+            System.out.println(req.getUrl() + req.getHeaders());
+        }
     }
 }
